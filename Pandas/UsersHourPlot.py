@@ -3,6 +3,7 @@
 from pylab import *
 import pandas as pd
 
+# Day 6
 # Generate a plot of the number of users of the site every hour.
 
 # file format example: 
