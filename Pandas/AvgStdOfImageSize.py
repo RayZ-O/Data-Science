@@ -16,7 +16,7 @@ names=['ClientID','Date','Time','URL','ResponseCode','Size'],
 na_values=['-'])
 
 r200_img_df = log_df[ (log_df['ResponseCode'] == 200) &
-             (log_df['URL'].str.contains('.gif$|.jpg$|.jpeg$', 
+             (log_df['URL'].str.contains('\.gif$|\.jpg$|\.jpeg$', 
              flags=re.IGNORECASE, regex=True, na=False))]
 
 print 'Average:', r200_img_df['Size'].mean(axis=1)
