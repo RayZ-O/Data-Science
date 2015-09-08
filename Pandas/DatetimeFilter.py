@@ -15,10 +15,14 @@ na_values=['-'])
 may1_df = log_df[log_df['Date'] == '01/May/1998']
 
 print 'Before noon:', may1_df[may1_df['Time'] < '12:00:00'].shape[0]
-print 'After noon:', may1_df[may1_df['Time'] >= '12:00:00'].shape[0]
+print 'After noon:', may1_df[may1_df['Time'] > '12:00:00'].shape[0]
+
+# output:
+# Before noon: 75920
+# After noon: 107379
 
 # Another solution, print the same result but much slower
 # may1_df['DateTime'] = pd.to_datetime(may1_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1))
 
 # print 'Before noon:', may1_df[may1_df.apply(lambda row: row['DateTime'].hour < 12, axis=1)].shape[0]
-# print 'After noon:', may1_df[may1_df.apply(lambda row: row['DateTime'].hour >= 12, axis=1)].shape[0]
+# print 'After noon:', may1_df[may1_df.apply(lambda row: row['DateTime'].hour > 12, axis=1)].shape[0]

@@ -16,5 +16,5 @@ na_values=['-'])
 selected_id = log_df['ClientID'].unique()[0:100]
 uc_df = log_df[log_df['ClientID'].apply(lambda id: id in selected_id)]
 uc_df['Hour'] = uc_df['Time'].apply(lambda time: int(str(time)[:2])) 
-uc_df.plot(kind='scatter', x='Hour', y='ClientID')
+uc_df.plot(kind='scatter', x='ClientID', y='Hour')
 show()
