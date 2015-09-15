@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pylab import *
 import pandas as pd
 
 # Print the number of requests per client that had HTTP return code 404

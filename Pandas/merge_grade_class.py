@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pylab import *
 import pandas as pd
 
 # Use merge to join Grades with the Classes table, and find out what class Alice got an A in.

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pylab import *
 import pandas as pd
 
 # If records A and B match each other, then self-join will get both (A, B) and (B, A) in the 

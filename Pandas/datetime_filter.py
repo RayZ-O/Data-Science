@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pylab import *
 import pandas as pd
 
 # Print how many requests were made on May 1st before and after noon (12:00:00)
