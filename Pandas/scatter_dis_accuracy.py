@@ -26,17 +26,19 @@ def accuracy(max_distance):
     return (precision, recall)
 
 thresholds = range(1, 11)
-p = []
-r = []
+precision = []
+recall = []
 
 for t in thresholds:
     acc = accuracy(t)
-    p.append(acc[0])
-    r.append(acc[1])
+    precision.append(acc[0])
+    recall.append(acc[1])
 
 pylab.xlabel('recall')
 pylab.ylabel('precision')
 pylab.title('distance accuracy')
-pylab.scatter(r, p)
+
+color = [ 0.9 if p > 0.8 and r > 0.7 else 0.5 for p, r in zip(precision, recall) ]
+pylab.scatter(recall, precision, c=color, s=80)
 
 pylab.show()
