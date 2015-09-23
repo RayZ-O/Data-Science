@@ -16,31 +16,31 @@ content = jsondata['query']['pages'].values()[0]['revisions'][0]['*']
 wikicode = mwph.parse(content)
 infobox = ''
 for t in wikicode.filter_templates():
-	if re.search(re.compile('infobox ', re.IGNORECASE), t.encode('utf-8')):
-	 	infobox = t.encode('utf-8')
+    if re.search(re.compile('infobox ', re.IGNORECASE), t.encode('utf-8')):
+         infobox = t.encode('utf-8')
 if not infobox:
-	print "Can't find infobox."
-	sys.exit(1)
+    print "Can't find infobox."
+    sys.exit(1)
 
 print title + ':\n'
 # spouse = {{marriage|[[Michelle Obama|Michelle Robinson]]|October 3, 1992}}
 # spouse         = Ke Lingling (divorced)<br>[[Peng Liyuan]] (m. 1987)
 spouse = re.search(r'spouse[^\[]*\[\[([^\]]*)\]\]', infobox)
 if spouse:
-	print 'Spouse:', spouse.group(1), '\n' 
+    print 'Spouse:', spouse.group(1), '\n' 
 else:
-	print 'Spouse not found\n'
+    print 'Spouse not found\n'
 # birth_place = [[Honolulu]], [[Hawaii]], U.S.
 # birth_place    = [[Beijing]], [[China]]
 raw_birth_place = re.search(r'birth_place[ ]*=[ ]*(.*)', infobox)
 if raw_birth_place:
-	print 'Place of birth:', re.sub('\[|\]', '', raw_birth_place.group(1)), '\n'
+    print 'Place of birth:', re.sub('\[|\]', '', raw_birth_place.group(1)), '\n'
 else:
-	print 'Place of birth not found\n'
+    print 'Place of birth not found\n'
 # education = [[Punahou School]]
 education = re.search(r'education[ ]*=[ ]*\[\[([^\]]*)\]\]', infobox)
 if education:
-	print 'Education:', education.group(1), '\n'
+    print 'Education:', education.group(1), '\n'
 # schools maybe {{plain list|\n*[[school A]]\n*[[school B]]\n*[[school B]]\n}} or single element [[school A]]
 # alma_mater = {{plain list|
 # *[[Occidental College]]
@@ -50,11 +50,11 @@ if education:
 # alma_mater     = [[Tsinghua University]]
 raw_alma_mater = re.search(re.compile(r'alma_mater[ ]*=[ ]*({{plain list([^}]*)|\[\[([^\]]*\]\]))', re.DOTALL), infobox)
 if raw_alma_mater:
-	print 'Schools:'
-	for sram in raw_alma_mater.group(1).split('\n'):
-		school = re.search(r'\[\[([^\]]*)\]\]', sram)
-		if school:
-			print school.group(1)
+    print 'Schools:'
+    for sram in raw_alma_mater.group(1).split('\n'):
+        school = re.search(r'\[\[([^\]]*)\]\]', sram)
+        if school:
+            print school.group(1)
 
 if not education and not raw_alma_mater:
-	print 'Schools not found'
+    print 'Schools not found'
