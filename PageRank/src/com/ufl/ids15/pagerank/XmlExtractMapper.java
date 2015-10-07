@@ -47,7 +47,7 @@ public class XmlExtractMapper extends MapReduceBase implements Mapper<LongWritab
 			Matcher m = pattern.matcher(tagContent);			   
 			while(m.find()) {
 			    link.set(m.group(1).replace(' ', '_'));
-			    output.collect(title, link); 
+			    output.collect(link, title); 
 			}
 			break;
 		    }
