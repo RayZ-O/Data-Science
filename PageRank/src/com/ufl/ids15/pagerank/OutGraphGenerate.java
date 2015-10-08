@@ -10,25 +10,27 @@ import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 
 public class OutGraphGenerate {
-    public static void getAdjacencyGraph(String input, String output) throws Exception
-    {
+    public static void getAdjacencyGraph(String input, String output)
+	    throws Exception {
 	JobConf conf = new JobConf(OutGraphGenerate.class);
-	conf.setJobName("outgraphgenerate"); 
+	conf.setJobName("outgraphgenerate");
 	conf.setInputFormat(TextInputFormat.class);
 
 	conf.setOutputFormat(TextOutputFormat.class);
 	conf.setOutputKeyClass(Text.class);
-	conf.setOutputValueClass(Text.class);     
+	conf.setOutputValueClass(Text.class);
 
 	conf.setMapperClass(OutGraphGenerateMapper.class);
 	conf.setReducerClass(OutGraphGenerateReducer.class);
 
 	FileInputFormat.setInputPaths(conf, new Path(input));
-	FileOutputFormat.setOutputPath(conf, new Path(output));    
+	FileOutputFormat.setOutputPath(conf, new Path(output));
 
 	JobClient.runJob(conf);
-    } 
+    }
+
     public static void main(String[] args) throws Exception {
-	getAdjacencyGraph("E:\\JavaProg\\PageRank\\input.txt", "E:\\JavaProg\\PageRank\\output");
+	getAdjacencyGraph("/cise/homes/rui/Desktop/PageRank.outlink",
+		"/cise/homes/rui/Desktop/output");
     }
 }

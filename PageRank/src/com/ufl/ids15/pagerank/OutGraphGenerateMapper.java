@@ -11,12 +11,16 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 
-public class OutGraphGenerateMapper extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
+public class OutGraphGenerateMapper extends MapReduceBase implements
+	Mapper<LongWritable, Text, Text, Text> {
+
     private Text title = new Text();
     private Text link = new Text();
+
     @Override
-    public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) 
-	    throws IOException {
+    public void map(LongWritable key, Text value,
+	    OutputCollector<Text, Text> output, Reporter reporter)
+		    throws IOException {
 	String line = value.toString();
 	try {
 	    StringTokenizer tokenizer = new StringTokenizer(line);
@@ -25,7 +29,7 @@ public class OutGraphGenerateMapper extends MapReduceBase implements Mapper<Long
 		link.set(tokenizer.nextToken());
 		output.collect(new Text(title), link);
 	    }
-	} catch(NoSuchElementException e) {
+	} catch (NoSuchElementException e) {
 	    // nothing to do
 	}
     }

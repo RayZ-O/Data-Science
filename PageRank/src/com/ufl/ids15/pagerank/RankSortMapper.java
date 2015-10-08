@@ -12,18 +12,23 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 
-public class RankSortMapper extends MapReduceBase implements Mapper<LongWritable, Text, DoubleWritable, Text> {
+public class RankSortMapper extends MapReduceBase implements
+	Mapper<LongWritable, Text, DoubleWritable, Text> {
+
+    private DoubleWritable rank = new DoubleWritable();
+    private Text title = new Text();
 
     @Override
-    public void map(LongWritable key, Text value, OutputCollector<DoubleWritable, Text> output, Reporter reporter)
-	    throws IOException {
+    public void map(LongWritable key, Text value,
+	    OutputCollector<DoubleWritable, Text> output, Reporter reporter)
+		    throws IOException {
 	String line = value.toString();
 	try {
 	    StringTokenizer tokenizer = new StringTokenizer(line);
-	    String title = tokenizer.nextToken();
-	    double rank = Double.parseDouble(tokenizer.nextToken());
-	    output.collect(new DoubleWritable(rank), new Text(title)); 
-	} catch(NoSuchElementException e) {
+	    title.set(tokenizer.nextToken());
+	    rank.set(Double.parseDouble(tokenizer.nextToken()));
+	    output.collect(rank, title);
+	} catch (NoSuchElementException e) {
 	    // nothing to do
 	}
     }

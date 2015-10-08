@@ -9,10 +9,12 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 
-public class OutGraphGenerateReducer extends MapReduceBase implements Reducer<Text, Text, Text, Text>{
+public class OutGraphGenerateReducer extends MapReduceBase implements
+	Reducer<Text, Text, Text, Text> {
 
     @Override
-    public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter)
+    public void reduce(Text key, Iterator<Text> values,
+	    OutputCollector<Text, Text> output, Reporter reporter)
 	    throws IOException {
 	StringBuilder sb = new StringBuilder();
 	while (values.hasNext()) {

@@ -10,16 +10,18 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 
-public class PageCountReducer extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
+public class PageCountReducer extends MapReduceBase implements
+	Reducer<Text, IntWritable, Text, Text> {
 
     @Override
-    public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output,
-	    Reporter reporter) throws IOException {
+    public void reduce(Text key, Iterator<IntWritable> values,
+	    OutputCollector<Text, Text> output, Reporter reporter)
+	    throws IOException {
 	int sum = 0;
 	while (values.hasNext()) {
 	    sum += values.next().get();
 	}
-	output.collect(key, new IntWritable(sum));
+	output.collect(new Text("N=" + sum), new Text(""));
     }
 
 }
