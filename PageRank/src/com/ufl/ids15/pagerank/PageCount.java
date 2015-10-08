@@ -1,5 +1,10 @@
 package com.ufl.ids15.pagerank;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -28,6 +33,13 @@ public class PageCount {
 	FileOutputFormat.setOutputPath(conf, new Path(output));
 
 	JobClient.runJob(conf);
+
+	Configuration fsconf = new Configuration();
+	Path outPath = new Path("output");
+        FileSystem fs = FileSystem.get(outPath.toUri(), fsconf);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(outPath)));
+        String line = br.readLine();
+	conf.set("NumberOfPages", line.substring(line.indexOf('=') + 1));;
     }
 
     public static void main(String[] args) throws Exception {

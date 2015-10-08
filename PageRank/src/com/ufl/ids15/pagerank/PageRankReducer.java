@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.MapReduceBase;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
@@ -17,6 +18,12 @@ public class PageRankReducer extends MapReduceBase implements
     static final double d = 0.85;
     private Text adjacency = null;
     private DoubleWritable rank = null;
+
+    private static Long N;
+    @Override
+    public void configure(JobConf job) {
+	N = Long.parseLong(job.get("NumberOfPages"));
+    }
 
     @Override
     public void reduce(Text key, Iterator<PageRankGenericWritable> values,
@@ -33,7 +40,7 @@ public class PageRankReducer extends MapReduceBase implements
 		adjacency = (Text) val;
 	    }
 	}
-	newRank = (1 - d) + d * newRank; // TODO get N from last job
+	newRank = (1 - d) / N + d * newRank; // TODO get N from last job
 	PageRankGenericWritable outputValue = new PageRankGenericWritable(
 		new Text(String.valueOf(newRank) + adjacency));
 	output.collect(key, outputValue);

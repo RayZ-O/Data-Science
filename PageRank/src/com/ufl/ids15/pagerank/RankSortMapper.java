@@ -1,7 +1,6 @@
 package com.ufl.ids15.pagerank;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.io.DoubleWritable;
@@ -23,14 +22,10 @@ public class RankSortMapper extends MapReduceBase implements
 	    OutputCollector<DoubleWritable, Text> output, Reporter reporter)
 		    throws IOException {
 	String line = value.toString();
-	try {
-	    StringTokenizer tokenizer = new StringTokenizer(line);
-	    title.set(tokenizer.nextToken());
-	    rank.set(Double.parseDouble(tokenizer.nextToken()));
-	    output.collect(rank, title);
-	} catch (NoSuchElementException e) {
-	    // nothing to do
-	}
+	StringTokenizer tokenizer = new StringTokenizer(line);
+	title.set(tokenizer.nextToken());
+	rank.set(Double.parseDouble(tokenizer.nextToken()));
+	output.collect(rank, title);
     }
 
 }

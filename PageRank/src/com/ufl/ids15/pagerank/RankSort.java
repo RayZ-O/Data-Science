@@ -24,6 +24,7 @@ public class RankSort {
 
 	conf.setMapperClass(RankSortMapper.class);
 	conf.setReducerClass(RankSortReducer.class);
+	conf.setNumReduceTasks(1);
 
 	FileInputFormat.setInputPaths(conf, new Path(input));
 	FileOutputFormat.setOutputPath(conf, new Path(output));

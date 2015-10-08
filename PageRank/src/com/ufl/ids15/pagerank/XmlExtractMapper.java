@@ -32,8 +32,7 @@ public class XmlExtractMapper extends MapReduceBase implements
 	XMLInputFactory factory = XMLInputFactory.newInstance();
 	String tagContent = "";
 	try {
-	    XMLStreamReader reader = factory
-		    .createXMLStreamReader(new StringReader(value.toString()));
+	    XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(value.toString()));
 	    while (reader.hasNext()) {
 		int event = reader.next();
 

@@ -17,7 +17,7 @@ public class PageCountReducer extends MapReduceBase implements
     public void reduce(Text key, Iterator<IntWritable> values,
 	    OutputCollector<Text, Text> output, Reporter reporter)
 	    throws IOException {
-	int sum = 0;
+	long sum = 0;
 	while (values.hasNext()) {
 	    sum += values.next().get();
 	}
