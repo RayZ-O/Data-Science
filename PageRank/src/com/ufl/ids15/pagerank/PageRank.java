@@ -27,6 +27,8 @@ public class PageRank {
 	FileOutputFormat.setOutputPath(conf, new Path(output));
 
 	JobClient.runJob(conf);
+
+	conf.set("IterationCount",input.substring(input.length() - 1));
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,7 +1,6 @@
 package com.ufl.ids15.pagerank;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -20,11 +19,11 @@ public class RankSortMapper extends MapReduceBase implements
     @Override
     public void map(LongWritable key, Text value,
 	    OutputCollector<DoubleWritable, Text> output, Reporter reporter)
-		    throws IOException {
+             throws IOException {
 	String line = value.toString();
-	StringTokenizer tokenizer = new StringTokenizer(line);
-	title.set(tokenizer.nextToken());
-	rank.set(Double.parseDouble(tokenizer.nextToken()));
+	String[] s = line.split("\t", 3);
+	title.set(s[0]);
+	rank.set(Double.parseDouble(s[1]));
 	output.collect(rank, title);
     }
 

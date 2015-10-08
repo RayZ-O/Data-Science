@@ -36,9 +36,9 @@ public class PageCount {
 
 	Configuration fsconf = new Configuration();
 	Path outPath = new Path("output");
-        FileSystem fs = FileSystem.get(outPath.toUri(), fsconf);
-        BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(outPath)));
-        String line = br.readLine();
+	FileSystem fs = FileSystem.get(outPath.toUri(), fsconf);
+	BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(outPath)));
+	String line = br.readLine();
 	conf.set("NumberOfPages", line.substring(line.indexOf('=') + 1));;
     }
 

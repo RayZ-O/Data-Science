@@ -16,13 +16,13 @@ public class PageRankReducer extends MapReduceBase implements
 	Reducer<Text, PageRankGenericWritable, Text, PageRankGenericWritable> {
 
     static final double d = 0.85;
-    private Text adjacency = null;
+    private Text adjacency = new Text();
     private DoubleWritable rank = null;
 
-    private static Long N;
+    private static double factor;
     @Override
     public void configure(JobConf job) {
-	N = Long.parseLong(job.get("NumberOfPages"));
+	factor = (1 - d) / Long.parseLong(job.get("NumberOfPages"));
     }
 
     @Override
@@ -31,16 +31,17 @@ public class PageRankReducer extends MapReduceBase implements
 	    Reporter reporter) throws IOException {
 
 	double newRank = 0.0;
+	adjacency.set("");
 	while (values.hasNext()) {
 	    Writable val = values.next().get();
 	    if (val instanceof DoubleWritable) {
 		rank = (DoubleWritable) val;
 		newRank += rank.get();
 	    } else {
-		adjacency = (Text) val;
+		adjacency.set((Text) val);
 	    }
 	}
-	newRank = (1 - d) / N + d * newRank; // TODO get N from last job
+	newRank = factor + d * newRank;
 	PageRankGenericWritable outputValue = new PageRankGenericWritable(
 		new Text(String.valueOf(newRank) + adjacency));
 	output.collect(key, outputValue);
