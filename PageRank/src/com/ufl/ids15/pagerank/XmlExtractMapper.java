@@ -1,14 +1,8 @@
 package com.ufl.ids15.pagerank;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -18,48 +12,35 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 
 public class XmlExtractMapper extends MapReduceBase implements
-	Mapper<LongWritable, Text, Text, Text> {
+Mapper<LongWritable, Text, Text, Text> {
 
-    static String re = "\\[\\[(.*?)(\\|(.*?))*\\]\\]";
-    static Pattern pattern = Pattern.compile(re);
+    static Pattern titlePattern = Pattern.compile("<title>(.*?)</title>", Pattern.DOTALL);
+    static Pattern textPattern = Pattern.compile("<text>(.*?)</text>", Pattern.DOTALL);
+    static Pattern linkPattern = Pattern.compile("\\[{2}(.*?)(\\|.*?)*\\]{2}", Pattern.DOTALL);
     private Text title = new Text();
     private Text link = new Text();
+    private Text mark = new Text("#");
 
     @Override
     public void map(LongWritable key, Text value,
 	    OutputCollector<Text, Text> output, Reporter reporter)
-	    throws IOException {
-	XMLInputFactory factory = XMLInputFactory.newInstance();
-	String tagContent = "";
-	try {
-	    XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(value.toString()));
-	    while (reader.hasNext()) {
-		int event = reader.next();
-
-		switch (event) {
-		case XMLStreamConstants.CHARACTERS:
-		    tagContent = reader.getText().trim();
-		    break;
-
-		case XMLStreamConstants.END_ELEMENT:
-		    switch (reader.getLocalName()) {
-		    case "title":
-			title.set(tagContent.replace(' ', '_'));
-			output.collect(title, new Text("#"));
-			break;
-		    case "text":
-			Matcher m = pattern.matcher(tagContent);
-			while (m.find()) {
-			    link.set(m.group(1).replace(' ', '_'));
-			    output.collect(link, title);
-			}
-			break;
-		    }
-		    break;
-		}
+            throws IOException {
+	String line = value.toString();
+	Matcher titleMathcer = titlePattern.matcher(line);
+	if (titleMathcer.find()) {
+	    String titleStr = titleMathcer.group(1).replace(' ', '_');
+	    title.set(titleStr);
+	    output.collect(title, mark);
+	}
+	Matcher textMathcer = textPattern.matcher(line);
+	if (textMathcer.find()) {
+	    String text = textMathcer.group(1);
+	    Matcher linkMathcer = linkPattern.matcher(text);
+	    while (linkMathcer.find()) {
+		String linkStr = linkMathcer.group(1).replace(' ', '_');
+		link.set(linkStr);
+		output.collect(link, title);
 	    }
-	} catch (XMLStreamException e) {
-	    System.out.println("[ERROR] Parse XML failed!");
 	}
     }
 }
