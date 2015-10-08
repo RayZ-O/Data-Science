@@ -20,6 +20,7 @@ public class OutGraphGenerateReducer extends MapReduceBase implements
 	while (values.hasNext()) {
 	    sb.append(values.next().toString() + '\t');
 	}
+	sb.setLength(Math.max(sb.length() - 1, 0)); // delete last \t
 	output.collect(key, new Text(sb.toString()));
     }
 }

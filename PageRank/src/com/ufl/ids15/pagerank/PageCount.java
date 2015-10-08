@@ -35,11 +35,11 @@ public class PageCount {
 	JobClient.runJob(conf);
 
 	Configuration fsconf = new Configuration();
-	Path outPath = new Path("output");
+	Path outPath = new Path(output+"/part-00000");
 	FileSystem fs = FileSystem.get(outPath.toUri(), fsconf);
 	BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(outPath)));
 	String line = br.readLine();
-	conf.set("NumberOfPages", line.substring(line.indexOf('=') + 1));;
+	conf.set("NumberOfPages", line.substring(line.indexOf('=') + 1));
     }
 
     public static void main(String[] args) throws Exception {

@@ -14,15 +14,14 @@ import org.apache.hadoop.mapred.Reporter;
 public class PageRankMapper extends MapReduceBase implements
 Mapper<LongWritable, Text, Text, PageRankGenericWritable> {
 
+    private Text title = new Text();
     private Text adjacency = new Text();
     private Text adjNode = new Text();
     private DoubleWritable rankWritable = new DoubleWritable(0.0);
 
     private static int iterationCnt;
-    private static long N;
     @Override
     public void configure(JobConf job) {
-	N = Long.parseLong(job.get("NumberOfPages"));
 	iterationCnt = Integer.parseInt(job.get("IterationCount"));
     }
 
@@ -31,29 +30,23 @@ Mapper<LongWritable, Text, Text, PageRankGenericWritable> {
 	    OutputCollector<Text, PageRankGenericWritable> output,
 	    Reporter reporter) throws IOException {
 	String line = value.toString();
-	String[] parts = null;
-	if (iterationCnt < 1) {
-	    // get the length of adjacency list
-	    long adjListSize = line.split("\t").length - 1;
-	    // split the title and adjacency list
-	    parts = line.split("\t", 2);
-	    String initialRank = Double.toString(1.0 / N) + '\t';
-	    String adjSize = Long.toString(adjListSize) + '\t';
-	    String adjList = adjListSize > 0 ? parts[1] : "";
-	    adjacency.set(initialRank + adjSize + adjList);
-	} else {
-	    parts = line.split("\t", 4);
-	    long adjListSize = Long.parseLong(parts[2]);
-	    String adjList = adjListSize > 0 ? parts[3] : "";
-	    adjacency.set(parts[2] + '\t' + adjList);
+
+	int adjBegin = iterationCnt < 1 ? 1 : 2;
+	String[] parts = line.split("\t", adjBegin + 1);
+
+	if (parts.length > 2) {
+	    String[] adjArray = parts[2].split("\t");
+	    long adjListSize = adjArray.length;
 	    double rank = adjListSize > 0 ? Double.parseDouble(parts[1]) / adjListSize : 0;
-	    for (int i = 2; i < parts.length; i++) {
-		adjNode.set(parts[i]);
+	    for (int i = 0; i < adjListSize; i++) {
+		adjNode.set(adjArray[i]);
 		rankWritable.set(rank);
 		output.collect(adjNode, new PageRankGenericWritable(rankWritable));
 	    }
 	}
-	String title = parts[0];
-	output.collect(new Text(title), new PageRankGenericWritable(adjacency));
+
+	title.set(parts[0]);
+	adjacency.set(parts.length > adjBegin ? '\t' + parts[adjBegin] : "");
+	output.collect(title, new PageRankGenericWritable(adjacency));
     }
 }

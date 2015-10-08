@@ -19,17 +19,24 @@ public class PageRankReducer extends MapReduceBase implements
     private Text adjacency = new Text();
     private DoubleWritable rank = null;
 
+    private static long N;
     private static double factor;
+    private static int iterationCnt;
     @Override
     public void configure(JobConf job) {
-	factor = (1 - d) / Long.parseLong(job.get("NumberOfPages"));
+	N = Long.parseLong(job.get("NumberOfPages"));
+	factor = (1 - d) / N;
+	iterationCnt = Integer.parseInt(job.get("IterationCount"));
     }
 
     @Override
     public void reduce(Text key, Iterator<PageRankGenericWritable> values,
 	    OutputCollector<Text, PageRankGenericWritable> output,
 	    Reporter reporter) throws IOException {
-
+//
+//	while (values.hasNext()) {
+//	    System.out.println("**************"+key.toString()+"**************"+values.next().get()+"**************");
+//	}
 	double newRank = 0.0;
 	adjacency.set("");
 	while (values.hasNext()) {
@@ -41,9 +48,9 @@ public class PageRankReducer extends MapReduceBase implements
 		adjacency.set((Text) val);
 	    }
 	}
-	newRank = factor + d * newRank;
-	PageRankGenericWritable outputValue = new PageRankGenericWritable(
-		new Text(String.valueOf(newRank) + adjacency));
+	String rank = iterationCnt >= 1 ? String.valueOf(factor + d * newRank) : String.valueOf(1.0 / N);
+	PageRankGenericWritable outputValue = new PageRankGenericWritable(new Text(rank + adjacency));
+//	System.out.println("**************"+key+"**************");
 	output.collect(key, outputValue);
     }
 }
