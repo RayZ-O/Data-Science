@@ -25,7 +25,7 @@ Reducer<DoubleWritable, Text, Text, DoubleWritable> {
 	     throws IOException {
 	final double threshold = 5.0 / N;
 	while ((values.hasNext())) {
-	    if (key.get() > threshold) {
+	    if (key.get() >= threshold) {
 		output.collect(values.next(), key);
 	    } else {
 		return;

@@ -19,10 +19,10 @@ Mapper<LongWritable, Text, Text, PageRankGenericWritable> {
     private Text adjNode = new Text();
     private DoubleWritable rankWritable = new DoubleWritable(0.0);
 
-    private static int iterationCnt;
+    private static String initialized;
     @Override
     public void configure(JobConf job) {
-	iterationCnt = Integer.parseInt(job.get("IterationCount"));
+	initialized = job.get("Initialized");
     }
 
     @Override
@@ -31,7 +31,7 @@ Mapper<LongWritable, Text, Text, PageRankGenericWritable> {
 	    Reporter reporter) throws IOException {
 	String line = value.toString();
 
-	int adjBegin = iterationCnt < 1 ? 1 : 2;
+	int adjBegin = initialized.equals("false") ? 1 : 2;
 	String[] parts = line.split("\t", adjBegin + 1);
 
 	if (parts.length > 2) {
