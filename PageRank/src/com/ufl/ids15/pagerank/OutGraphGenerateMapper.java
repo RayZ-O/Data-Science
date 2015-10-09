@@ -14,16 +14,16 @@ Mapper<LongWritable, Text, Text, Text> {
 
     private Text title = new Text();
     private Text link = new Text();
-
     @Override
     public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter)
 	    throws IOException {
 	String line = value.toString();
-	String[] s = line.split("\t");
-	title.set(s[0]);
-	for (int i = 1; i < s.length; i++) {
-	    link.set(s[i]);
-	    output.collect(title, link);
+	String[] parts = line.split("\t", -1);
+	title.set(parts[0]);
+	link.set("");
+	if (parts.length > 1) {
+	    link.set(parts[1]);
 	}
+	output.collect(title, link);
     }
 }

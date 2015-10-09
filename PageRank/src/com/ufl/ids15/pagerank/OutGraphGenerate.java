@@ -30,7 +30,9 @@ public class OutGraphGenerate {
     }
 
     public static void main(String[] args) throws Exception {
-	getAdjacencyGraph("/cise/homes/rui/Desktop/PageRank.outlink",
-		"/cise/homes/rui/Desktop/output");
+//	getAdjacencyGraph("/cise/homes/rui/Desktop/PageRank.outlink",
+//		"/cise/homes/rui/Desktop/output");
+	getAdjacencyGraph("/cise/homes/rui/Desktop/wiki.outlink",
+	"/cise/homes/rui/Desktop/output");
     }
 }

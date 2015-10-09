@@ -15,8 +15,8 @@ public class PageRank {
 	JobConf conf = new JobConf(PageRank.class);
 	conf.setJobName("pagerank");
 	conf.setInputFormat(TextInputFormat.class);
-	conf.set("NumberOfPages", "5");
-	conf.set("IterationCount","2");
+	conf.set("NumberOfPages", "20000");
+	conf.set("IterationCount","1");
 	conf.setOutputFormat(TextOutputFormat.class);
 	conf.setOutputKeyClass(Text.class);
 	conf.setOutputValueClass(PageRankGenericWritable.class);
@@ -31,7 +31,11 @@ public class PageRank {
     }
 
     public static void main(String[] args) throws Exception {
-	calPageRank("/cise/homes/rui/Desktop/PageRank.iter2",
+//	calPageRank("/cise/homes/rui/Desktop/PageRank.iter0",
+//		"/cise/homes/rui/Desktop/output");
+//	calPageRank("/cise/homes/rui/Desktop/wiki.outlink.out",
+//		"/cise/homes/rui/Desktop/output");
+	calPageRank("/cise/homes/rui/Desktop/wiki.iter0",
 		"/cise/homes/rui/Desktop/output");
     }
 

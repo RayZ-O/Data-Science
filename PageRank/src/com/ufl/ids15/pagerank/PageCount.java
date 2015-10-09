@@ -43,7 +43,9 @@ public class PageCount {
     }
 
     public static void main(String[] args) throws Exception {
-	calTotalPages("/cise/homes/rui/Desktop/PageRank.outlink.out",
+//	calTotalPages("/cise/homes/rui/Desktop/PageRank.outlink.out",
+//		"/cise/homes/rui/Desktop/output");
+	calTotalPages("/cise/homes/rui/Desktop/wiki.outlink.out",
 		"/cise/homes/rui/Desktop/output");
     }
 }

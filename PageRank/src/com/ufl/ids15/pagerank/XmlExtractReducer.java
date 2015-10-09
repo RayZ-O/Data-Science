@@ -22,10 +22,11 @@ public class XmlExtractReducer extends MapReduceBase implements
 	    pages.add(values.next().toString());
 	}
 	if (pages.contains("#")) {
-	    output.collect(key, new Text(""));
+	    output.collect(null , key);
 	    pages.remove("#");
+	    pages.remove(key.toString());
 	    for (String p : pages) {
-		output.collect(new Text(p), key);
+		output.collect(new Text(p), new Text(key + "\t"));
 	    }
 	}
     }

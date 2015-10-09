@@ -18,9 +18,16 @@ public class OutGraphGenerateReducer extends MapReduceBase implements
 	    throws IOException {
 	StringBuilder sb = new StringBuilder();
 	while (values.hasNext()) {
-	    sb.append(values.next().toString() + '\t');
+	    String val = values.next().toString();
+	    if (!val.equals("")) {
+		sb.append(val + '\t');
+	    }
 	}
-	sb.setLength(Math.max(sb.length() - 1, 0)); // delete last \t
-	output.collect(key, new Text(sb.toString()));
+	if (sb.length() > 0) {
+	    sb.setLength(sb.length() - 1);
+	    output.collect(key, new Text(sb.toString()));
+	} else {
+	    output.collect(key, null);
+	}
     }
 }

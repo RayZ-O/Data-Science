@@ -15,8 +15,8 @@ public class XmlExtractMapper extends MapReduceBase implements
 Mapper<LongWritable, Text, Text, Text> {
 
     static Pattern titlePattern = Pattern.compile("<title>(.*?)</title>", Pattern.DOTALL);
-    static Pattern textPattern = Pattern.compile("<text>(.*?)</text>", Pattern.DOTALL);
-    static Pattern linkPattern = Pattern.compile("\\[{2}(.*?)(\\|.*?)*\\]{2}", Pattern.DOTALL);
+    static Pattern textPattern = Pattern.compile("<text[^>]*>(.*?)</text>", Pattern.DOTALL);
+    static Pattern linkPattern = Pattern.compile("\\[{2}(.*?)(\\|.*?)*?\\]{2}", Pattern.DOTALL);
     private Text title = new Text();
     private Text link = new Text();
     private Text mark = new Text("#");

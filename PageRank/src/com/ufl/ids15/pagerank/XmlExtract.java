@@ -1,5 +1,6 @@
 package com.ufl.ids15.pagerank;
 
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -11,6 +12,7 @@ import org.apache.mahout.text.wikipedia.XmlInputFormat;
 
 public class XmlExtract {
     public static void parseXml(String input, String output) throws Exception {
+
 	JobConf conf = new JobConf(XmlExtract.class);
 	conf.setJobName("xmlextract");
 	conf.setInputFormat(XmlInputFormat.class);
@@ -31,7 +33,9 @@ public class XmlExtract {
     }
 
     public static void main(String[] args) throws Exception {
-	parseXml("/cise/homes/rui/Desktop/input.xml",
+//	parseXml("/cise/homes/rui/Desktop/input.xml",
+//		"/cise/homes/rui/Desktop/output");
+	parseXml("/cise/homes/rui/Desktop/enwiki-latest-pages-articles.xml",
 		"/cise/homes/rui/Desktop/output");
     }
 }

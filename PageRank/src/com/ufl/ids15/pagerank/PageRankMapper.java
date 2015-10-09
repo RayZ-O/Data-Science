@@ -44,7 +44,6 @@ Mapper<LongWritable, Text, Text, PageRankGenericWritable> {
 		output.collect(adjNode, new PageRankGenericWritable(rankWritable));
 	    }
 	}
-
 	title.set(parts[0]);
 	adjacency.set(parts.length > adjBegin ? '\t' + parts[adjBegin] : "");
 	output.collect(title, new PageRankGenericWritable(adjacency));

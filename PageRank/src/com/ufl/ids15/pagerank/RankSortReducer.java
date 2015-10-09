@@ -12,7 +12,7 @@ import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 
 public class RankSortReducer extends MapReduceBase implements
-Reducer<DoubleWritable, Text, DoubleWritable, Text> {
+Reducer<DoubleWritable, Text, Text, DoubleWritable> {
 
     private static Long N;
     @Override
@@ -21,12 +21,14 @@ Reducer<DoubleWritable, Text, DoubleWritable, Text> {
     }
     @Override
     public void reduce(DoubleWritable key, Iterator<Text> values,
-	    OutputCollector<DoubleWritable, Text> output, Reporter reportor)
+	    OutputCollector<Text, DoubleWritable> output, Reporter reportor)
 	     throws IOException {
 	final double threshold = 5.0 / N;
 	while ((values.hasNext())) {
 	    if (key.get() > threshold) {
-		output.collect(key, values.next());
+		output.collect(values.next(), key);
+	    } else {
+		return;
 	    }
 	}
     }

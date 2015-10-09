@@ -16,6 +16,7 @@ public class RankSort {
 	JobConf conf = new JobConf(RankSort.class);
 	conf.setJobName("ranksort");
 	conf.setInputFormat(TextInputFormat.class);
+	conf.set("NumberOfPages", "20000");
 
 	conf.setOutputFormat(TextOutputFormat.class);
 	conf.setOutputKeyComparatorClass(DescDoubleComparator.class);
@@ -33,7 +34,9 @@ public class RankSort {
     }
 
     public static void main(String[] args) throws Exception {
-	orderRank("/cise/homes/rui/Desktop/PageRank.out",
+//	orderRank("/cise/homes/rui/Desktop/PageRank.out",
+//		"/cise/homes/rui/Desktop/output");
+	orderRank("/cise/homes/rui/Desktop/wiki.iter1.out",
 		"/cise/homes/rui/Desktop/output");
     }
 

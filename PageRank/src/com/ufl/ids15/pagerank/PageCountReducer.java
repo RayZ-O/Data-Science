@@ -21,7 +21,7 @@ public class PageCountReducer extends MapReduceBase implements
 	while (values.hasNext()) {
 	    sum += values.next().get();
 	}
-	output.collect(new Text("N=" + sum), new Text(""));
+	output.collect(new Text("N=" + sum), null);
     }
 
 }
