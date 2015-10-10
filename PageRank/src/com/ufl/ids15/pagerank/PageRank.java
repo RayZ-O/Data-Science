@@ -1,8 +1,11 @@
 package com.ufl.ids15.pagerank;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -19,38 +22,25 @@ import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 import org.apache.mahout.text.wikipedia.XmlInputFormat;
 
+
 public class PageRank {
     private static String numberOfPages;
     private static String initialized = "false";
-    private static String pathName;
-    private static String tmpPathName;
-    private static String resultPathName;
-    private static String outlinkResName;
-    private static String nResName;
-    private static String iter1ResName;
-    private static String iter8ResName;
-    private static String job1TmpName;
-    private static String job2TmpName;
-    private static String job3TmpName;
-    private static String job4TmpName;
-    private static String job5TmpName;
+    private static HashMap<String, String> outPaths;
 
-    public static void initialFileName (String outBucketName) {
-	if (!outBucketName.endsWith("/")) {
-	    outBucketName += "/";
-	}
-	pathName = outBucketName;
-	tmpPathName = pathName + "tmp/";
-	resultPathName = pathName + "results/";
-	outlinkResName = resultPathName + "PageRank.outlink.out";
-	nResName = resultPathName + "PageRank.n.out";
-	iter1ResName = resultPathName + "PageRank.iter1.out";
-	iter8ResName = resultPathName + "PageRank.iter8.out";
-	job1TmpName = tmpPathName + "job1/";
-	job2TmpName = tmpPathName + "job2/";
-	job3TmpName = tmpPathName + "job3/";
-	job4TmpName = tmpPathName + "job4/";
-	job5TmpName = tmpPathName + "job5/";
+    public static void initialFiles (String outBucketName) throws IOException, URISyntaxException {
+	outPaths = new HashMap<String, String>();
+	String tmpPathName = outBucketName + "tmp/";
+	String resultPathName = outBucketName + "results/";
+	outPaths.put("outlinkRes", resultPathName + "PageRank.outlink.out");
+	outPaths.put("nRes", resultPathName + "PageRank.n.out");
+	outPaths.put("iter1Res", resultPathName + "PageRank.iter1.out");
+	outPaths.put("iter8Res", resultPathName + "PageRank.iter8.out");
+	outPaths.put("job1Tmp", tmpPathName + "job1/");
+	outPaths.put("job2Tmp", tmpPathName + "job2/");
+	outPaths.put("job3Tmp", tmpPathName + "job3/");
+	outPaths.put("job4Tmp", tmpPathName + "job4/");
+	outPaths.put("job5Tmp", tmpPathName + "job5/");
     }
 
     // Job 1: extract outlink from XML file and remove red link
@@ -160,32 +150,33 @@ public class PageRank {
 
     public static void main(String[] args) throws Exception {
 	// initialization
-	String inputXMLPath = args[0]; //s3://uf-dsr-courses-ids/data/enwiki-latest-pages-articles.xml
-	PageRank.initialFileName(args[1]); //s3://rui-zhang-emr/
-	Configuration conf = new Configuration() ;
-	FileSystem fs = FileSystem.get(new URI(tmpPathName), conf);
+	// args[0]: input s3://uf-dsr-courses-ids/data/enwiki-latest-pages-articles.xml
+	// args[1]: output s3://rui-zhang-emr/
+	Configuration conf = new Configuration();
+	FileSystem fs =  FileSystem.get(new URI(args[1]), conf);
+	PageRank.initialFiles(args[1]);
 	//extract wiki and remove redlinks
-	PageRank.parseXml(inputXMLPath, job1TmpName);
+	PageRank.parseXml(args[0], outPaths.get("job1Tmp"));
 	// wiki adjacency graph generation
-	PageRank.getAdjacencyGraph(job1TmpName, job2TmpName);
-	FileUtil.copyMerge(fs, new Path(job2TmpName), fs, new Path(outlinkResName), false, conf, "");
+	PageRank.getAdjacencyGraph(outPaths.get("job1Tmp"), outPaths.get("job2Tmp"));
+	FileUtil.copyMerge(fs, new Path(outPaths.get("job2Tmp")), fs, new Path(outPaths.get("outlinkRes")), false, conf, "");
 	// total number of pages
-	PageRank.calTotalPages(outlinkResName, job3TmpName);
-	FileUtil.copyMerge(fs, new Path(job3TmpName), fs, new Path(nResName), false, conf, "");
-	BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(nResName))));
+	PageRank.calTotalPages(outPaths.get("outlinkRes"), outPaths.get("job3Tmp"));
+	FileUtil.copyMerge(fs, new Path(outPaths.get("job3Tmp")), fs, new Path(outPaths.get("nRes")), false, conf, "");
+	BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(outPaths.get("nRes")))));
 	String line = br.readLine();
 	numberOfPages = line.substring(line.indexOf('=') + 1);
 	// iterative MapReduce
-	PageRank.calPageRank(outlinkResName, job4TmpName + "iter0");
+	PageRank.calPageRank(outPaths.get("outlinkRes"), outPaths.get("job4Tmp") + "iter0");
 	initialized = "true";
 	for (int i = 0; i < 8; i++) {
-	    PageRank.calPageRank(job4TmpName + "iter" + i, job4TmpName + "iter" + (i + 1));
+	    PageRank.calPageRank(outPaths.get("job4Tmp") + "iter" + i, outPaths.get("job4Tmp") + "iter" + (i + 1));
 	}
 	// Rank page in the descending order of PageRank
-	PageRank.orderRank(job4TmpName + "iter1", job5TmpName + "iter1");
-	PageRank.orderRank(job4TmpName + "iter8", job5TmpName + "iter8");
-	FileUtil.copyMerge(fs, new Path(job5TmpName + "iter1"), fs, new Path(iter1ResName), false, conf, "");
-	FileUtil.copyMerge(fs, new Path(job5TmpName + "iter8"), fs, new Path(iter8ResName), false, conf, "");
+	PageRank.orderRank(outPaths.get("job4Tmp") + "iter1", outPaths.get("job5Tmp") + "iter1");
+	PageRank.orderRank(outPaths.get("job4Tmp") + "iter8", outPaths.get("job5Tmp") + "iter8");
+	FileUtil.copyMerge(fs, new Path(outPaths.get("job5Tmp") + "iter1"), fs, new Path(outPaths.get("iter1Res")), false, conf, "");
+	FileUtil.copyMerge(fs, new Path(outPaths.get("job5Tmp") + "iter8"), fs, new Path(outPaths.get("iter8Res")), false, conf, "");
     }
 }
 
