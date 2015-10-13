@@ -1,10 +1,8 @@
 package com.ufl.ids15.pagerank;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
@@ -28,7 +26,7 @@ public class PageRank {
     private static String initialized = "false";
     private static HashMap<String, String> outPaths;
 
-    public static void initialFiles (String outBucketName) throws IOException, URISyntaxException {
+    public static void initialFiles (String outBucketName) {
 	outPaths = new HashMap<String, String>();
 	String tmpPathName = outBucketName + "tmp/";
 	String resultPathName = outBucketName + "results/";

@@ -16,7 +16,7 @@ Mapper<LongWritable, Text, Text, Text> {
 
     static Pattern titlePattern = Pattern.compile("<title>(.*?)</title>", Pattern.DOTALL);
     static Pattern textPattern = Pattern.compile("<text[^>]*>(.*?)</text>", Pattern.DOTALL);
-    static Pattern linkPattern = Pattern.compile("\\[{2}([^:]*?)(\\|.*?)*\\]{2}", Pattern.DOTALL);
+    static Pattern linkPattern = Pattern.compile("\\[{2}([^|\\[\\]]*)", Pattern.DOTALL);
     private Text title = new Text();
     private Text link = new Text();
     private Text mark = new Text("#");
@@ -29,7 +29,7 @@ Mapper<LongWritable, Text, Text, Text> {
 	Matcher titleMathcer = titlePattern.matcher(line);
 	if (titleMathcer.find()) {
 	    String titleStr = titleMathcer.group(1).replace(' ', '_');
-	    title.set(titleStr);
+	    title.set(titleStr.replaceAll("&amp;", "&").replaceAll("&quot;", "\""));
 	    output.collect(title, mark);
 	}
 	Matcher textMathcer = textPattern.matcher(line);
@@ -38,7 +38,7 @@ Mapper<LongWritable, Text, Text, Text> {
 	    Matcher linkMathcer = linkPattern.matcher(text);
 	    while (linkMathcer.find()) {
 		String linkStr = linkMathcer.group(1).replace(' ', '_');
-		link.set(linkStr);
+		link.set(linkStr.replaceAll("&amp;", "&").replaceAll("&quot;", "\""));
 		output.collect(link, title);
 	    }
 	}
