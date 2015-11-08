@@ -5,6 +5,18 @@ import pylab
 from sklearn.datasets import fetch_mldata
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
+
+# Display several images in a row
+def show(imgs, n=1):
+    fig = pylab.figure()
+    for i in xrange(0, n):
+        fig.add_subplot(1, n, i, xticklabels=[], yticklabels=[])
+        if n == 1:
+            img = imgs
+        else:
+            img = imgs[i]
+        pylab.imshow(img.reshape(28, 28), cmap="Greys")
+
 # KNN Classification
 
 DATA_PATH = '~/data'
@@ -19,6 +31,7 @@ test_labels_sample = test_labels[::100]
 model = KNeighborsClassifier(n_neighbors=4, algorithm='brute').fit(train, train_labels)
 # measure the model's classification accuracy on test_sample
 model.score(test_sample, test_labels_sample)
+# 0.96999999999999997
 # visualize the nearest neighbors of cases where the model makes erroneous predictions
 preds = model.predict(test_sample)
 errors = [i for i in xrange(0, len(test_sample)) if preds[i] != test_labels_sample[i]]
@@ -32,7 +45,6 @@ for i in errors:
 test_sample = test[::10]
 test_labels_sample = test_labels[::10]
 preds = model.predict(test_sample)
-
 # Compute and plot the confusion matrix for test_sample
 cm = confusion_matrix(test_labels_sample, preds)
 print cm
